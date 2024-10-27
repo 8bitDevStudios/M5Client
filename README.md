@@ -1,7 +1,9 @@
 In leading roles/В главных ролях:
 
-![image](https://github.com/user-attachments/assets/f731489b-b309-49c9-9b7e-a7f6c6eebbd0)
+![image](https://github.com/user-attachments/assets/0a2a89fc-1fbd-4c7d-9dbc-44a071e426e4)
 
-![image](https://github.com/user-attachments/assets/1a31fec9-9b5b-4bee-8fa6-520965396435)
+![image](https://github.com/user-attachments/assets/f21aef1b-e5ad-4989-9f3d-91a06c2bbeee)
 
-![image](https://github.com/user-attachments/assets/13e86b4b-d318-4ba2-a646-121f0bc23cc9)
+![image](https://github.com/user-attachments/assets/cc6c933a-1735-4ff1-b131-05a58a835556)
+
+(CatHack, Bruce and Nemo)
