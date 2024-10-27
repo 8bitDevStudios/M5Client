@@ -1,4 +1,4 @@
-In leading roles:
+In leading roles/В главных ролях:
 
 ![image](https://github.com/user-attachments/assets/f731489b-b309-49c9-9b7e-a7f6c6eebbd0)
 
