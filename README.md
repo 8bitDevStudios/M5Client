@@ -1,4 +1,7 @@
-In leading roles/В главных ролях:
+Установите pytohon, распакуйте файлы из архива на рабочий стол, а после введите в терминал
+   ```bash
+   python M5Client.py
+   ```
 
 ![image](https://github.com/user-attachments/assets/806ae21e-cef9-4984-9608-9dc7b57ea16b)
 
