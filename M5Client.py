@@ -10,6 +10,37 @@ import os
 import zipfile
 import threading
 
+# Папка для загрузки файлов
+data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_load')
+
+# Создание папки, если она не существует
+os.makedirs(data_directory, exist_ok=True)
+
+# Список необходимых файлов
+required_files = {
+    "cathack.png": "https://github.com/Teapot321/M5Client/raw/main/cathack.png",
+    "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/bruce.png",
+    "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/nemo.png",
+    "esptool.zip": "https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip",
+    "CH341SER.EXE": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/CH341SER.EXE"
+}
+
+# Проверка наличия файлов и их загрузка
+def check_and_download_files():
+    for filename, url in required_files.items():
+        file_path = os.path.join(data_directory, filename)
+        if not os.path.exists(file_path):
+            download_file(url, file_path)
+
+def download_file(url, file_path):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        with open(file_path, 'wb') as f:
+            f.write(response.content)
+        print(f"Файл {file_path} загружен.")
+    except Exception as e:
+        messagebox.showerror("Ошибка", f"Не удалось загрузить {file_path}: {e}")
 
 # Установка библиотек
 def install_requirements():
@@ -22,16 +53,13 @@ def install_requirements():
     for package in required_packages:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-
 # Установка библиотек
 install_requirements()
 
-
-# esptool
+# Загрузка esptool
 def install_esptool():
-    esptool_url = 'https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip'
-    esptool_zip = 'esptool.zip'
-    esptool_dir = 'esptool480'
+    esptool_zip_path = os.path.join(data_directory, 'esptool.zip')
+    esptool_dir = os.path.join(data_directory, 'esptool480')
 
     if os.path.exists(os.path.join(esptool_dir, 'esptool-win64', 'esptool.exe')):
         messagebox.showinfo("Информация", "esptool уже установлен.")
@@ -50,14 +78,9 @@ def install_esptool():
 
     def download_and_extract():
         try:
-            response = requests.get(esptool_url)
-            with open(esptool_zip, 'wb') as f:
-                f.write(response.content)
-
-            with zipfile.ZipFile(esptool_zip, 'r') as zip_ref:
+            with zipfile.ZipFile(esptool_zip_path, 'r') as zip_ref:
                 zip_ref.extractall(esptool_dir)
 
-            os.remove(esptool_zip)
             messagebox.showinfo("Успех", "esptool установлен успешно!")
         except Exception as e:
             messagebox.showerror("Ошибка", f"Не удалось установить esptool: {e}")
@@ -67,11 +90,10 @@ def install_esptool():
 
     threading.Thread(target=download_and_extract).start()
 
-
 # Драйвер
 def download_and_install_driver():
     driver_url = "https://github.com/Teapot321/M5Client/raw/refs/heads/main/CH341SER.EXE"
-    driver_path = "CH341SER.EXE"
+    driver_path = os.path.join(data_directory, "CH341SER.EXE")
 
     block_buttons()
     loading_window = Toplevel(root)
@@ -92,7 +114,6 @@ def download_and_install_driver():
                 f.write(response.content)
 
             subprocess.run(driver_path, check=True)
-            os.remove(driver_path)
             messagebox.showinfo("Успех", "Драйвер установлен успешно!")
         except Exception as e:
             messagebox.showerror("Ошибка", f"Не удалось установить драйвер: {e}")
@@ -101,7 +122,6 @@ def download_and_install_driver():
             unblock_buttons()
 
     threading.Thread(target=download_driver).start()
-
 
 # URL
 def get_latest_firmware_url():
@@ -129,12 +149,11 @@ def get_latest_firmware_url():
         asset = release_data['assets'][0]
         return asset['browser_download_url']
 
-
 # Установка бина
 def install_firmware():
     try:
         firmware_url = get_latest_firmware_url()
-        firmware_path = "latest_firmware.bin"
+        firmware_path = os.path.join(data_directory, "latest_firmware.bin")
 
         response = requests.get(firmware_url)
         with open(firmware_path, 'wb') as f:
@@ -143,11 +162,10 @@ def install_firmware():
     except Exception as e:
         messagebox.showerror("Ошибка", f"Не удалось загрузить прошивку: {e}")
 
-
 # Прошивка стика
 def flash_firmware(firmware_path):
     com_port = com_port_var.get()
-    esptool_path = os.path.join('esptool480', 'esptool-win64', 'esptool.exe')
+    esptool_path = os.path.join(data_directory, 'esptool480', 'esptool-win64', 'esptool.exe')
 
     loading_window = Toplevel(root)
     loading_window.title("Прошивка устройства")
@@ -173,18 +191,15 @@ def flash_firmware(firmware_path):
 
     threading.Thread(target=flash_device).start()
 
-
 def start_installation():
     install_button.config(state=tk.DISABLED)
     install_firmware()
-
 
 def block_buttons():
     install_button.config(state=tk.DISABLED, bg="gray", fg="white")
     com_port_menu.config(state=tk.DISABLED, bg="gray", fg="white")
     driver_button.config(state=tk.DISABLED, bg="gray", fg="white")
     switch_firmware_button.config(state=tk.DISABLED, bg="gray", fg="white")
-
 
 def unblock_buttons():
     if current_firmware.get() == "Nemo":
@@ -203,11 +218,9 @@ def unblock_buttons():
         driver_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
         switch_firmware_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
 
-
 def get_com_ports():
     ports = serial.tools.list_ports.comports()
     return [port.device for port in ports]
-
 
 root = tk.Tk()
 root.title("M5Client")
@@ -215,23 +228,26 @@ root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
 
-cat_hack_image = tk.PhotoImage(file="cathack.png")
-bruce_image = tk.PhotoImage(file="bruce.png")
-nemo_image = tk.PhotoImage(file="nemo.png")
+# Проверяем и загружаем необходимые файлы
+check_and_download_files()
+
+# Загружаем изображения
+cat_hack_image = tk.PhotoImage(file=os.path.join(data_directory, "cathack.png"))
+bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
+nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
 
 img = tk.Label(root, image=cat_hack_image, bg="#050403")
 img.place(relx=0.5, rely=0.0, anchor='n')
 
-install_button = tk.Button(root, text=" Install ", command=lambda: threading.Thread(target=start_installation).start(),
+install_button = tk.Button(root, text="Install", command=lambda: threading.Thread(target=start_installation).start(),
                            bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid", highlightbackground="#d9d9d9",
-                           highlightcolor="white", font=("Press Start 2P", 20))
+                           highlightcolor="white", font=("Fixedsys", 20))
 
 driver_button = tk.Button(root, text="Driver", command=download_and_install_driver,
                           bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid", highlightbackground="#d9d9d9",
-                          highlightcolor="white", font=("Press Start 2P", 11))
+                          highlightcolor="white", font=("Fixedsys", 11))
 
 current_firmware = StringVar(value="CatHack")
-
 
 def switch_firmware():
     global current_firmware
@@ -260,10 +276,9 @@ def switch_firmware():
         driver_button.config(bg="#050403", fg="#ff8e19")
         switch_firmware_button.config(bg="#050403", fg="#ff8e19")
 
-
 switch_firmware_button = tk.Button(root, text="CatHack", command=switch_firmware,
                                    bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
-                                   highlightbackground="#d9d9d9", highlightcolor="white", font=("Press Start 2P", 11))
+                                   highlightbackground="#d9d9d9", highlightcolor="white", font=("Fixedsys", 11))
 
 com_port_var = StringVar(root)
 com_ports = get_com_ports()
@@ -272,10 +287,9 @@ com_port_var.set(com_ports[0] if com_ports else "Нет доступных по�
 com_port_menu = OptionMenu(root, com_port_var, *com_ports)
 com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
 
-
+# Привязка событий для кнопок
 def on_enter_install(event):
     install_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
-
 
 def on_leave_install(event):
     if current_firmware.get() == "Nemo":
@@ -285,10 +299,8 @@ def on_leave_install(event):
     else:
         install_button.config(bg="#050403", fg="#ff8e19")
 
-
 def on_enter_driver(event):
     driver_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
-
 
 def on_leave_driver(event):
     if current_firmware.get() == "Nemo":
@@ -298,10 +310,8 @@ def on_leave_driver(event):
     else:
         driver_button.config(bg="#050403", fg="#ff8e19")
 
-
 def on_enter_switch(event):
     switch_firmware_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
-
 
 def on_leave_switch(event):
     if current_firmware.get() == "Nemo":
@@ -310,7 +320,6 @@ def on_leave_switch(event):
         switch_firmware_button.config(bg="#030407", fg="#a82da4")
     else:
         switch_firmware_button.config(bg="#050403", fg="#ff8e19")
-
 
 install_button.bind("<Enter>", on_enter_install)
 install_button.bind("<Leave>", on_leave_install)
