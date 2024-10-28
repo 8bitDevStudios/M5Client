@@ -21,8 +21,7 @@ required_files = {
     "cathack.png": "https://github.com/Teapot321/M5Client/raw/main/cathack.png",
     "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/bruce.png",
     "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/nemo.png",
-    "esptool.zip": "https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip",
-    "CH341SER.EXE": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/CH341SER.EXE"
+    "esptool.zip": "https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip"
 }
 
 # Проверка наличия файлов и их загрузка
@@ -56,39 +55,26 @@ def install_requirements():
 # Установка библиотек
 install_requirements()
 
-# Загрузка esptool
+# Установка esptool
 def install_esptool():
     esptool_zip_path = os.path.join(data_directory, 'esptool.zip')
     esptool_dir = os.path.join(data_directory, 'esptool480')
 
-    if os.path.exists(os.path.join(esptool_dir, 'esptool-win64', 'esptool.exe')):
-        messagebox.showinfo("Информация", "esptool уже установлен.")
-        return
+    # Удаляем сообщение о том, что esptool уже установлен
+    if not os.path.exists(os.path.join(esptool_dir, 'esptool-win64', 'esptool.exe')):
+        def download_and_extract():
+            try:
+                with zipfile.ZipFile(esptool_zip_path, 'r') as zip_ref:
+                    zip_ref.extractall(esptool_dir)
 
-    block_buttons()
-    loading_window = Toplevel(root)
-    loading_window.title("Загрузка esptool")
-    loading_window.geometry("300x100")
-    loading_window.configure(bg="#050403")
+                # Удаляем zip файл после успешной распаковки
+                os.remove(esptool_zip_path)
 
-    loading_label = tk.Label(loading_window, text="Загрузка esptool...", bg="#050403", fg="#ff8e19", font=("Arial", 14))
-    loading_label.pack(pady=20)
+                messagebox.showinfo("M5Client", "Все зависимости успешно установлены!")
+            except Exception as e:
+                messagebox.showerror("Ошибка", f"Не удалось установить esptool: {e}")
 
-    root.update()
-
-    def download_and_extract():
-        try:
-            with zipfile.ZipFile(esptool_zip_path, 'r') as zip_ref:
-                zip_ref.extractall(esptool_dir)
-
-            messagebox.showinfo("Успех", "esptool установлен успешно!")
-        except Exception as e:
-            messagebox.showerror("Ошибка", f"Не удалось установить esptool: {e}")
-        finally:
-            loading_window.destroy()
-            unblock_buttons()
-
-    threading.Thread(target=download_and_extract).start()
+        threading.Thread(target=download_and_extract).start()
 
 # Драйвер
 def download_and_install_driver():
@@ -101,8 +87,8 @@ def download_and_install_driver():
     loading_window.geometry("300x100")
     loading_window.configure(bg="#050403")
 
-    loading_label = tk.Label(loading_window, text="Скачивание драйвера...", bg="#050403", fg="#ff8e19",
-                             font=("Arial", 14))
+    loading_label = tk.Label(loading_window, text="Скачивание драйвера...", bg="#050403", fg="#ffffff",
+                             font=("Arial", 14))  # Изменено на белый цвет
     loading_label.pack(pady=20)
 
     root.update()
@@ -172,8 +158,8 @@ def flash_firmware(firmware_path):
     loading_window.geometry("300x100")
     loading_window.configure(bg="#050403")
 
-    loading_label = tk.Label(loading_window, text="Прошивка устройства...", bg="#050403", fg="#ff8e19",
-                             font=("Arial", 14))
+    loading_label = tk.Label(loading_window, text="Прошивка устройства...", bg="#050403", fg="#ffffff",
+                             font=("Arial", 14))  # Изменено на белый цвет
     loading_label.pack(pady=20)
 
     root.update()
