@@ -3,10 +3,8 @@
    python M5Client.py
    ```
 
-![image](https://github.com/user-attachments/assets/806ae21e-cef9-4984-9608-9dc7b57ea16b)
+![image](https://github.com/user-attachments/assets/a542f87c-d9d4-4307-9552-a958ab7a167c)
 
-![image](https://github.com/user-attachments/assets/f21aef1b-e5ad-4989-9f3d-91a06c2bbeee)
+![image](https://github.com/user-attachments/assets/313aac73-c599-4465-bc65-7128a74c10d5)
 
-![image](https://github.com/user-attachments/assets/cc6c933a-1735-4ff1-b131-05a58a835556)
-
-(CatHack, Bruce and Nemo)
+![image](https://github.com/user-attachments/assets/6ecdfd27-7163-43ff-84da-b656c71cf789)
