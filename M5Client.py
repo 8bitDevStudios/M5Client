@@ -11,7 +11,7 @@ import zipfile
 import threading
 
 # Папка для загрузки файлов
-data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_load')
+data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_data')
 
 # Создание папки, если она не существует
 os.makedirs(data_directory, exist_ok=True)
