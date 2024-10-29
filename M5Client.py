@@ -24,12 +24,14 @@ required_files = {
     "esptool.zip": "https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip"
 }
 
+
 # Проверка наличия файлов и их загрузка
 def check_and_download_files():
     for filename, url in required_files.items():
         file_path = os.path.join(data_directory, filename)
         if not os.path.exists(file_path):
             download_file(url, file_path)
+
 
 def download_file(url, file_path):
     try:
@@ -40,6 +42,7 @@ def download_file(url, file_path):
         print(f"Файл {file_path} загружен.")
     except Exception as e:
         messagebox.showerror("Ошибка", f"Не удалось загрузить {file_path}: {e}")
+
 
 # Установка библиотек
 def install_requirements():
@@ -52,29 +55,24 @@ def install_requirements():
     for package in required_packages:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-# Установка библиотек
-install_requirements()
 
 # Установка esptool
 def install_esptool():
     esptool_zip_path = os.path.join(data_directory, 'esptool.zip')
     esptool_dir = os.path.join(data_directory, 'esptool480')
 
-    # Удаляем сообщение о том, что esptool уже установлен
     if not os.path.exists(os.path.join(esptool_dir, 'esptool-win64', 'esptool.exe')):
         def download_and_extract():
             try:
                 with zipfile.ZipFile(esptool_zip_path, 'r') as zip_ref:
                     zip_ref.extractall(esptool_dir)
-
-                # Удаляем zip файл после успешной распаковки
                 os.remove(esptool_zip_path)
-
                 messagebox.showinfo("M5Client", "Все зависимости успешно установлены!")
             except Exception as e:
                 messagebox.showerror("Ошибка", f"Не удалось установить esptool: {e}")
 
         threading.Thread(target=download_and_extract).start()
+
 
 # Драйвер
 def download_and_install_driver():
@@ -88,7 +86,7 @@ def download_and_install_driver():
     loading_window.configure(bg="#050403")
 
     loading_label = tk.Label(loading_window, text="Скачивание драйвера...", bg="#050403", fg="#ffffff",
-                             font=("Arial", 14))  # Изменено на белый цвет
+                             font=("Arial", 14))
     loading_label.pack(pady=20)
 
     root.update()
@@ -109,31 +107,36 @@ def download_and_install_driver():
 
     threading.Thread(target=download_driver).start()
 
+
 # URL
 def get_latest_firmware_url():
+    device = device_var.get()  # Получаем текущее устройство
     if current_firmware.get() == "Bruce":
-        # Ласт брюс
         api_url = 'https://api.github.com/repos/pr3y/Bruce/releases/latest'
         response = requests.get(api_url)
         response.raise_for_status()
         release_data = response.json()
-
-        # URL Bruce для Plus2
         for asset in release_data['assets']:
-            if 'plus2' in asset['name'].lower():  # Проверяем, что в имени файла есть 'plus2'
+            if device == 'Plus2' and 'plus2' in asset['name'].lower():
                 return asset['browser_download_url']
-        raise Exception("Прошивка для Plus2 не найдена.")
+            elif device == 'Plus1' and 'plus' in asset['name'].lower() and 'plus2' not in asset['name'].lower():
+                return asset['browser_download_url']
+        raise Exception("Прошивка для устройства не найдена.")
     elif current_firmware.get() == "Nemo":
-        # Nemo
-        return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus2.bin"
-    else:
-        # CatHack
+        if device == 'Plus2':
+            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus2.bin"
+        elif device == 'Plus1':
+            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus.bin"
+    else:  # CatHack
+        if device == 'Plus1':
+            raise Exception("Прошивка для устройства Plus1 недоступна для CatHack.")
         api_url = "https://api.github.com/repos/Stachugit/CatHack/releases/latest"
         response = requests.get(api_url)
         response.raise_for_status()
         release_data = response.json()
         asset = release_data['assets'][0]
         return asset['browser_download_url']
+
 
 # Установка бина
 def install_firmware():
@@ -148,6 +151,7 @@ def install_firmware():
     except Exception as e:
         messagebox.showerror("Ошибка", f"Не удалось загрузить прошивку: {e}")
 
+
 # Прошивка стика
 def flash_firmware(firmware_path):
     com_port = com_port_var.get()
@@ -159,7 +163,7 @@ def flash_firmware(firmware_path):
     loading_window.configure(bg="#050403")
 
     loading_label = tk.Label(loading_window, text="Прошивка устройства...", bg="#050403", fg="#ffffff",
-                             font=("Arial", 14))  # Изменено на белый цвет
+                             font=("Arial", 14))
     loading_label.pack(pady=20)
 
     root.update()
@@ -173,40 +177,37 @@ def flash_firmware(firmware_path):
             messagebox.showerror("Ошибка", f"Не удалось прошить устройство: {e}")
         finally:
             loading_window.destroy()
-            unblock_buttons()
+            unblock_buttons()  # Разблокируем кнопки после завершения прошивки
 
     threading.Thread(target=flash_device).start()
+
 
 def start_installation():
     install_button.config(state=tk.DISABLED)
     install_firmware()
+
 
 def block_buttons():
     install_button.config(state=tk.DISABLED, bg="gray", fg="white")
     com_port_menu.config(state=tk.DISABLED, bg="gray", fg="white")
     driver_button.config(state=tk.DISABLED, bg="gray", fg="white")
     switch_firmware_button.config(state=tk.DISABLED, bg="gray", fg="white")
+    device_menu.config(state=tk.DISABLED, bg="gray", fg="white")
+
 
 def unblock_buttons():
-    if current_firmware.get() == "Nemo":
-        install_button.config(state=tk.NORMAL, bg="#060606", fg="#7d9f71")
-        com_port_menu.config(state=tk.NORMAL, bg="#060606", fg="#7d9f71")
-        driver_button.config(state=tk.NORMAL, bg="#060606", fg="#7d9f71")
-        switch_firmware_button.config(state=tk.NORMAL, bg="#060606", fg="#7d9f71")
-    elif current_firmware.get() == "Bruce":
-        install_button.config(state=tk.NORMAL, bg="#030407", fg="#a82da4")
-        com_port_menu.config(state=tk.NORMAL, bg="#030407", fg="#a82da4")
-        driver_button.config(state=tk.NORMAL, bg="#030407", fg="#a82da4")
-        switch_firmware_button.config(state=tk.NORMAL, bg="#030407", fg="#a82da4")
-    else:
-        install_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
-        com_port_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
-        driver_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
-        switch_firmware_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    install_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    com_port_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    driver_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    switch_firmware_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    device_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    update_button_colors()  # Обновляем цвета кнопок после разблокировки
+
 
 def get_com_ports():
     ports = serial.tools.list_ports.comports()
     return [port.device for port in ports]
+
 
 root = tk.Tk()
 root.title("M5Client")
@@ -235,36 +236,65 @@ driver_button = tk.Button(root, text="Driver", command=download_and_install_driv
 
 current_firmware = StringVar(value="CatHack")
 
+
 def switch_firmware():
     global current_firmware
     if current_firmware.get() == "CatHack":
         current_firmware.set("Bruce")
         switch_firmware_button.config(text="Bruce")
         img.config(image=bruce_image)
-        install_button.config(bg="#030407", fg="#a82da4")
-        com_port_menu.config(bg="#030407", fg="#a82da4")
-        driver_button.config(bg="#030407", fg="#a82da4")
-        switch_firmware_button.config(bg="#030407", fg="#a82da4")
     elif current_firmware.get() == "Bruce":
         current_firmware.set("Nemo")
         switch_firmware_button.config(text="Nemo")
         img.config(image=nemo_image)
-        install_button.config(bg="#060606", fg="#7d9f71")
-        com_port_menu.config(bg="#060606", fg="#7d9f71")
-        driver_button.config(bg="#060606", fg="#7d9f71")
-        switch_firmware_button.config(bg="#060606", fg="#7d9f71")
     else:
         current_firmware.set("CatHack")
         switch_firmware_button.config(text="CatHack")
         img.config(image=cat_hack_image)
-        install_button.config(bg="#050403", fg="#ff8e19")
-        com_port_menu.config(bg="#050403", fg="#ff8e19")
-        driver_button.config(bg="#050403", fg="#ff8e19")
-        switch_firmware_button.config(bg="#050403", fg="#ff8e19")
+
+    update_device_options()  # Обновляем выбор устройства при смене прошивки
+    update_button_colors()  # Обновляем цвета кнопок при смене прошивки
+
+
+def update_device_options():
+    current_firmware_value = current_firmware.get()
+    device_menu['menu'].delete(0, 'end')  # Удаляем все элементы
+    if current_firmware_value == "CatHack":
+        device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+    else:
+        device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+        device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
+
+
+def update_button_colors():
+    if current_firmware.get() == "Nemo":
+        color = "#060606"
+        text_color = "#7d9f71"
+    elif current_firmware.get() == "Bruce":
+        color = "#030407"
+        text_color = "#a82da4"
+    else:
+        color = "#050403"
+        text_color = "#ff8e19"
+
+    install_button.config(bg=color, fg=text_color)
+    com_port_menu.config(bg=color, fg=text_color)
+    driver_button.config(bg=color, fg=text_color)
+    switch_firmware_button.config(bg=color, fg=text_color)
+    device_menu.config(bg=color, fg=text_color)
+
 
 switch_firmware_button = tk.Button(root, text="CatHack", command=switch_firmware,
                                    bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
                                    highlightbackground="#d9d9d9", highlightcolor="white", font=("Fixedsys", 11))
+
+# Выбор устройства
+device_var = StringVar(root)
+device_var.set("Plus2")  # Установите значение по умолчанию
+
+# Инициализация меню выбора устройства
+device_menu = OptionMenu(root, device_var, "Plus2")
+device_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
 
 com_port_var = StringVar(root)
 com_ports = get_com_ports()
@@ -273,39 +303,31 @@ com_port_var.set(com_ports[0] if com_ports else "Нет доступных по�
 com_port_menu = OptionMenu(root, com_port_var, *com_ports)
 com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
 
+
 # Привязка событий для кнопок
 def on_enter_install(event):
     install_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
 
+
 def on_leave_install(event):
-    if current_firmware.get() == "Nemo":
-        install_button.config(bg="#060606", fg="#7d9f71")
-    elif current_firmware.get() == "Bruce":
-        install_button.config(bg="#030407", fg="#a82da4")
-    else:
-        install_button.config(bg="#050403", fg="#ff8e19")
+    update_button_colors()
+
 
 def on_enter_driver(event):
     driver_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
 
+
 def on_leave_driver(event):
-    if current_firmware.get() == "Nemo":
-        driver_button.config(bg="#060606", fg="#7d9f71")
-    elif current_firmware.get() == "Bruce":
-        driver_button.config(bg="#030407", fg="#a82da4")
-    else:
-        driver_button.config(bg="#050403", fg="#ff8e19")
+    update_button_colors()
+
 
 def on_enter_switch(event):
     switch_firmware_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
 
+
 def on_leave_switch(event):
-    if current_firmware.get() == "Nemo":
-        switch_firmware_button.config(bg="#060606", fg="#7d9f71")
-    elif current_firmware.get() == "Bruce":
-        switch_firmware_button.config(bg="#030407", fg="#a82da4")
-    else:
-        switch_firmware_button.config(bg="#050403", fg="#ff8e19")
+    update_button_colors()
+
 
 install_button.bind("<Enter>", on_enter_install)
 install_button.bind("<Leave>", on_leave_install)
@@ -314,10 +336,12 @@ driver_button.bind("<Leave>", on_leave_driver)
 switch_firmware_button.bind("<Enter>", on_enter_switch)
 switch_firmware_button.bind("<Leave>", on_leave_switch)
 
+# Обновленные координаты для размещения кнопок
 install_button.place(relx=0.17, rely=0.11, anchor='center')
 com_port_menu.place(relx=0.37, rely=0.11, anchor='center')
 driver_button.place(relx=0.5, rely=0.93, anchor='center')
-switch_firmware_button.place(relx=0.93, rely=0.05, anchor='ne')
+switch_firmware_button.place(relx=0.85, rely=0.05, anchor='n')  # Кнопка выбора прошивки передвинута вправо
+device_menu.place(relx=0.85, rely=0.19, anchor='center')  # Меню выбора устройства передвинуто вправо и вниз
 
 install_button.config(bg="#050403", fg="#ff8e19", highlightbackground="#d9d9d9", borderwidth=2)
 
