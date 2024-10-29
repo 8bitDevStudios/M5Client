@@ -22,6 +22,7 @@ required_files = {
     "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/bruce.png",
     "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/nemo.png",
     "m5launcher.png": "https://github.com/Teapot321/M5Client/raw/main/m5launcher.png",
+    "marauder.png": "https://github.com/Teapot321/M5Client/raw/main/marauder.png",
     "esptool.zip": "https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip"
 }
 
@@ -126,6 +127,13 @@ def get_latest_firmware_url():
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus.bin"
         elif device == 'Cardputer':
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5Cardputer.bin"  # Ссылка на прошивку для Cardputer
+    elif current_firmware.get() == "Marauder":
+        if device == 'Plus2':
+            return "https://m5burner-cdn.m5stack.com/firmware/b732d70a74405f7f1c6e961fa4d17f37.bin"
+        elif device == 'Plus1':
+            return "https://m5burner-cdn.m5stack.com/firmware/3397b17ad7fd314603abf40954a65369.bin"
+        elif device == 'Cardputer':
+            return "https://m5burner-cdn.m5stack.com/firmware/aeb96d4fec972a53f934f8da62ab7341.bin"  # Ссылка на прошивку для Cardputer
     elif current_firmware.get() == "M5Launcher":
         if device == 'Plus2':
             return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus2.bin"
@@ -157,7 +165,7 @@ def install_firmware():
     except Exception as e:
         messagebox.showerror("Ошибка", f"Не удалось загрузить прошивку: {e}")
 
-# Прошивка стика
+# Прошивка устройства
 def flash_firmware(firmware_path):
     com_port = com_port_var.get()
     esptool_path = os.path.join(data_directory, 'esptool480', 'esptool-win64', 'esptool.exe')
@@ -223,6 +231,7 @@ cat_hack_image = tk.PhotoImage(file=os.path.join(data_directory, "cathack.png"))
 bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
 nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
 m5launcher_image = tk.PhotoImage(file=os.path.join(data_directory, "m5launcher.png"))
+marauder_image = tk.PhotoImage(file=os.path.join(data_directory, "marauder.png"))  # Новое изображение для Marauder
 
 img = tk.Label(root, image=cat_hack_image, bg="#050403")
 img.place(relx=0.5, rely=0.0, anchor='n')
@@ -248,9 +257,13 @@ def switch_firmware():
         switch_firmware_button.config(text="Nemo")
         img.config(image=nemo_image)
     elif current_firmware.get() == "Nemo":
+        current_firmware.set("Marauder")
+        switch_firmware_button.config(text="Marauder")
+        img.config(image=marauder_image)
+    elif current_firmware.get() == "Marauder":
         current_firmware.set("M5Launcher")
         switch_firmware_button.config(text="M5Launcher")
-        img.config(image=m5launcher_image)
+        img.config(image=m5launcher_image)  # Изображение для M5Launcher
     else:
         current_firmware.set("CatHack")
         switch_firmware_button.config(text="CatHack")
@@ -270,6 +283,10 @@ def update_device_options():
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
         device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
+    elif current_firmware_value == "Marauder":
+        device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+        device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
+        device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
     else:
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
@@ -284,7 +301,10 @@ def update_button_colors():
         text_color = "#a82da4"
     elif current_firmware.get() == "M5Launcher":
         color = "#030703"  # Новый цвет фона для M5Launcher
-        text_color = "#7dc13f"  # Цвет текста для M5Launcher
+        text_color = "#9cb597"  # Цвет текста для M5Launcher
+    elif current_firmware.get() == "Marauder":
+        color = "#000000"  # Новый цвет фона для Marauder
+        text_color = "#c3c3c3"  # Цвет текста для Marauder
     else:
         color = "#050403"
         text_color = "#ff8e19"
