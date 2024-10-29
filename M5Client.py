@@ -21,6 +21,7 @@ required_files = {
     "cathack.png": "https://github.com/Teapot321/M5Client/raw/main/cathack.png",
     "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/bruce.png",
     "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/nemo.png",
+    "m5launcher.png": "https://github.com/Teapot321/M5Client/raw/main/m5launcher.png",
     "esptool.zip": "https://github.com/espressif/esptool/releases/download/v4.8.0/esptool-v4.8.0-win64.zip"
 }
 
@@ -125,6 +126,14 @@ def get_latest_firmware_url():
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus.bin"
         elif device == 'Cardputer':
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5Cardputer.bin"  # Ссылка на прошивку для Cardputer
+    elif current_firmware.get() == "M5Launcher":
+        if device == 'Plus2':
+            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus2.bin"
+        elif device == 'Plus1':
+            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus1_1.bin"
+        elif device == 'Cardputer':
+            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cardputer.bin"
+        raise Exception("Прошивка для устройства не найдена.")
     else:  # CatHack
         if device != 'Plus2':
             raise Exception("Прошивка CatHack доступна только на Plus2.")
@@ -213,6 +222,7 @@ check_and_download_files()
 cat_hack_image = tk.PhotoImage(file=os.path.join(data_directory, "cathack.png"))
 bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
 nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
+m5launcher_image = tk.PhotoImage(file=os.path.join(data_directory, "m5launcher.png"))
 
 img = tk.Label(root, image=cat_hack_image, bg="#050403")
 img.place(relx=0.5, rely=0.0, anchor='n')
@@ -237,6 +247,10 @@ def switch_firmware():
         current_firmware.set("Nemo")
         switch_firmware_button.config(text="Nemo")
         img.config(image=nemo_image)
+    elif current_firmware.get() == "Nemo":
+        current_firmware.set("M5Launcher")
+        switch_firmware_button.config(text="M5Launcher")
+        img.config(image=m5launcher_image)
     else:
         current_firmware.set("CatHack")
         switch_firmware_button.config(text="CatHack")
@@ -252,10 +266,13 @@ def update_device_options():
     device_menu['menu'].delete(0, 'end')  # Удаляем все элементы
     if current_firmware_value == "CatHack":
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+    elif current_firmware_value == "M5Launcher":
+        device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+        device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
+        device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
     else:
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
-        # Добавляем Cardputer
         device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
 
 def update_button_colors():
@@ -265,6 +282,9 @@ def update_button_colors():
     elif current_firmware.get() == "Bruce":
         color = "#030407"
         text_color = "#a82da4"
+    elif current_firmware.get() == "M5Launcher":
+        color = "#030703"  # Новый цвет фона для M5Launcher
+        text_color = "#7dc13f"  # Цвет текста для M5Launcher
     else:
         color = "#050403"
         text_color = "#ff8e19"
