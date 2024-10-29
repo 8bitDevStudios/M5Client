@@ -1,8 +1,8 @@
 **RU**
-Отличный инструмент для прошивки M5Stick Plus2/1.1
+Отличный инструмент для прошивки M5Stick Plus2/1.1 и Cardputer'а
 
 **ENG**
-A great tool for M5Stick Plus2/1.1 flashing
+A great tool for M5Stick Plus2/1.1 and Cardputer flashing
 
 ![image](https://github.com/user-attachments/assets/a9e96194-c801-418c-9249-a49c1434f6c0)
 
