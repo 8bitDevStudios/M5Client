@@ -4,13 +4,21 @@ import tkinter as tk
 from tkinter import messagebox, StringVar, OptionMenu, Toplevel
 import requests
 import serial
+import zipfile
 import serial.tools.list_ports
-import os
+import os, time
 import threading
 
+
+installing = False
+
+# Папка для загрузки файлов
 data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_data')
+
+# Создание папки, если она не существует
 os.makedirs(data_directory, exist_ok=True)
 
+# Список необходимых файлов
 required_files = {
     "cathack.png": "https://github.com/Teapot321/M5Client/raw/main/Background/cathack.png",
     "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/Background/bruce.png",
@@ -20,6 +28,7 @@ required_files = {
     "esptool.exe": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/esptool.exe"
 }
 
+# Проверка наличия файлов и их загрузка
 def check_and_download_files():
     for filename, url in required_files.items():
         file_path = os.path.join(data_directory, filename)
@@ -36,86 +45,177 @@ def download_file(url, file_path):
     except Exception as e:
         messagebox.showerror("Ошибка", f"Не удалось загрузить {file_path}: {e}")
 
+# Установка библиотек
 def install_requirements():
     required_packages = [
         "requests",
         "pyserial",
         "tkinterdnd2",
     ]
+
     for package in required_packages:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
+# Установка esptool
 def install_esptool():
     esptool_path = os.path.join(data_directory, 'esptool.exe')
+
     if not os.path.exists(esptool_path):
-        def download_esptool():
-            try:
-                download_file(required_files["esptool.exe"], esptool_path)
-            except Exception as e:
-                messagebox.showerror("Ошибка", f"Не удалось установить esptool: {e}")
-        threading.Thread(target=download_esptool).start()
+        download_file(required_files["esptool.exe"], esptool_path)
 
-def download_driver(driver_url, driver_name):
-    driver_path = os.path.join(data_directory, driver_name)
-    block_buttons()
-    loading_window = Toplevel(root)
-    loading_window.title("M5Client | v2.4")
-    loading_window.geometry("300x100")
-    loading_window.configure(bg="#050403")
-    loading_label = tk.Label(loading_window, text="Скачивание драйвера...", bg="#050403", fg="#ffffff", font=("Arial", 14))
-    loading_label.pack(pady=20)
-    root.update()
 
-    def download():
+def installfile(url, name):
+
+    global installing
+
+    threading.Thread(target=lambda: messagebox.showinfo('M5Client', 'Устанавливаем...')).start()
+
+    if installing: 
+        threading.Thread(target=lambda: messagebox.showinfo('M5Client', 'Ты уже что-то устанавливаешь!')).start()
+        return True
+    
+    installing = True
+
+    while True:
         try:
-            response = requests.get(driver_url)
-            with open(driver_path, 'wb') as f:
-                f.write(response.content)
-            subprocess.run(driver_path, check=True)
-        except Exception as e:
-            messagebox.showerror("Ошибка", f"Не удалось установить драйвер: {e}")
-        finally:
-            loading_window.destroy()
-            unblock_buttons()
+            r = requests.get(url, timeout=240, stream=True)
 
-    threading.Thread(target=download).start()
+            total_size = int(r.headers.get('content-length', 0))
+            completed = 0
+            proc = 0
+            oneprocent = total_size//100
 
-def open_driver_menu():
-    driver_menu_window = Toplevel(root)
-    driver_menu_window.title("M5Client | v2.4")
-    driver_menu_window.geometry("300x200")
-    driver_menu_window.configure(bg="#050403")
-    label = tk.Label(driver_menu_window, text="Drivers:", bg="#050403", fg="#ffffff", font=("Arial", 12))
-    label.pack(pady=10)
+            with open(name, 'wb') as f: 
 
-    ch9102_button = tk.Button(driver_menu_window, text="CH9102", command=lambda: download_driver(
-        "https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH9102.exe", "CH9102.exe"),
-        bg="#050403", fg="#ffffff")
-    ch9102_button.pack(pady=5)
+                starttime = time.time()
 
-    ch340_button = tk.Button(driver_menu_window, text="CH340", command=lambda: download_driver(
-        "https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH341SER.EXE", "CH341SER.EXE"),
-        bg="#050403", fg="#ffffff")
-    ch340_button.pack(pady=5)
+                for chunk in r.iter_content(chunk_size = 64 * 1024):
+                    if chunk:
+                        completed += len(chunk)
+                        speed_mbps = ((len(chunk)+0.1) / (1024 * 16)) / (time.time()+1-starttime)
+                        proc = (completed+0.1)//(oneprocent+0.1)
+                        print(f'Устанавливаем... ({round(speed_mbps, 3)} МБ/с) {proc}%')
+                        f.write(chunk)
+                        f.flush()
+                        os.fsync(f.fileno())
+                        starttime = time.time()
+                
+            break
+        except Exception as e: 
+            print(f'Пытаемся установить снова... Проверьте скорость вашего интернет-соединения, ошибка: {e}')
 
-    def on_enter(button):
-        button.config(bg="white", fg="#050403")
+    installing = False
 
-    def on_leave(button):
-        button.config(bg="#050403", fg="#ffffff")
+def installadriver(name, dir, link, endtext='Нажмите Install для установки драйверов.'):
 
-    ch9102_button.bind("<Enter>", lambda e: on_enter(ch9102_button))
-    ch9102_button.bind("<Leave>", lambda e: on_leave(ch9102_button))
-    ch340_button.bind("<Enter>", lambda e: on_enter(ch340_button))
-    ch340_button.bind("<Leave>", lambda e: on_leave(ch340_button))
+    print('Устанавливаем файл...')
 
-def download_and_install_driver():
-    open_driver_menu()
+    os.makedirs(name, exist_ok=True)
 
+    r = installfile(link, dir)
+
+    if not r:
+
+        print('Запускаем...')
+
+        os.system(f'start {dir}')
+
+        messagebox.showinfo(title='M5Client', message=endtext)
+
+def installsecdriver(name, dir, link, endtext):
+
+    print('Устанавливаем архив...')
+
+    r = installfile(link, 'file.zip')
+
+    if not r:
+
+        print('Разархивируем...')
+
+        with zipfile.ZipFile('file.zip', 'r') as zip_ref:
+            zip_ref.extractall(name)
+
+        print('Запускаем...')
+
+        os.system(f'start {dir}')
+
+        messagebox.showinfo(title='M5Client', message=endtext)
+
+def installdriverswindow():
+
+    driverwindow = tk.Tk()
+    driverwindow.title("DriverMenu")
+    driverwindow.geometry('240x170')
+
+    ch341 = tk.Button(driverwindow, text='CH341',command=lambda: threading.Thread(target=installadriver,
+                                            args=('CH341', 'CH341\\CH3CH341.exe', 'https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH341SER.EXE')).start())
+    ch341.place(x=20, y=20)
+
+    ch9102 = tk.Button(driverwindow, text='CH9102',command=lambda: threading.Thread(target=installadriver,
+                                            args=('CH9102', 'CH9102\\CH9102.exe', 'https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH9102.exe')).start())
+    ch9102.place(x=20, y=60)
+
+    CP210x = tk.Button(driverwindow, text='CP210x', command=lambda: threading.Thread(target=installsecdriver,
+                                            args=('CP210x', 'CP210x\\CP210xVCPInstaller_x64.exe', 'https://github.com/Sonys9/M5Tool/raw/refs/heads/main/CP210x_Windows_Drivers.zip',
+                                                    'Успех! Следуйте указаниям установщика для продолжения.')).start())
+    CP210x.place(x=20, y=100)
+
+    driverwindow.mainloop()
+
+# URL
+def get_latest_firmware_url():
+    device = device_var.get()
+    if current_firmware.get() == "Bruce":
+        api_url = 'https://api.github.com/repos/pr3y/Bruce/releases/latest'
+        response = requests.get(api_url)
+        response.raise_for_status()
+        release_data = response.json()
+        for asset in release_data['assets']:
+            if device == 'Plus2' and 'plus2' in asset['name'].lower():
+                return asset['browser_download_url']
+            elif device == 'Plus1' and 'plus' in asset['name'].lower() and 'plus2' not in asset['name'].lower():
+                return asset['browser_download_url']
+            elif device == 'Cardputer' and 'cardputer' in asset['name'].lower():
+                return asset['browser_download_url']
+        raise Exception("Прошивка для устройства не найдена.")
+    elif current_firmware.get() == "Nemo":
+        if device == 'Plus2':
+            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus2.bin"
+        elif device == 'Plus1':
+            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus.bin"
+        elif device == 'Cardputer':
+            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5Cardputer.bin"
+    elif current_firmware.get() == "Marauder":
+        if device == 'Plus2':
+            return "https://m5burner-cdn.m5stack.com/firmware/b732d70a74405f7f1c6e961fa4d17f37.bin"
+        elif device == 'Plus1':
+            return "https://m5burner-cdn.m5stack.com/firmware/3397b17ad7fd314603abf40954a65369.bin"
+        elif device == 'Cardputer':
+            return "https://m5burner-cdn.m5stack.com/firmware/aeb96d4fec972a53f934f8da62ab7341.bin"
+    elif current_firmware.get() == "M5Launcher":
+        if device == 'Plus2':
+            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus2.bin"
+        elif device == 'Plus1':
+            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus1_1.bin"
+        elif device == 'Cardputer':
+            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cardputer.bin"
+        raise Exception("Прошивка для устройства не найдена.")
+    else:
+        if device != 'Plus2':
+            raise Exception("Прошивка CatHack доступна только на Plus2.")
+        api_url = "https://api.github.com/repos/Stachugit/CatHack/releases/latest"
+        response = requests.get(api_url)
+        response.raise_for_status()
+        release_data = response.json()
+        asset = release_data['assets'][0]
+        return asset['browser_download_url']
+
+# Установка бина
 def install_firmware():
     try:
         firmware_url = get_latest_firmware_url()
         firmware_path = os.path.join(data_directory, "latest_firmware.bin")
+
         response = requests.get(firmware_url)
         with open(firmware_path, 'wb') as f:
             f.write(response.content)
@@ -123,15 +223,20 @@ def install_firmware():
     except Exception as e:
         messagebox.showerror("Ошибка", f"Не удалось загрузить прошивку: {e}")
 
+# Прошивка устройства
 def flash_firmware(firmware_path):
     com_port = com_port_var.get()
     esptool_path = os.path.join(data_directory, 'esptool.exe')
+
     loading_window = Toplevel(root)
-    loading_window.title("M5Client | v2.4")
+    loading_window.title("Прошивка устройства")
     loading_window.geometry("300x100")
     loading_window.configure(bg="#050403")
-    loading_label = tk.Label(loading_window, text="Прошивка устройства...", bg="#050403", fg="#ffffff", font=("Arial", 14))
+
+    loading_label = tk.Label(loading_window, text="Прошивка устройства...", bg="#050403", fg="#ffffff",
+                             font=("Arial", 14))
     loading_label.pack(pady=20)
+
     root.update()
 
     def flash_device():
@@ -176,8 +281,10 @@ root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
 
+# Проверяем и загружаем необходимые файлы
 check_and_download_files()
 
+# Загружаем изображения
 cat_hack_image = tk.PhotoImage(file=os.path.join(data_directory, "cathack.png"))
 bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
 nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
@@ -191,7 +298,7 @@ install_button = tk.Button(root, text="Install", command=lambda: threading.Threa
                            bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid", highlightbackground="#d9d9d9",
                            highlightcolor="white", font=("Fixedsys", 20))
 
-driver_button = tk.Button(root, text="Driver", command=download_and_install_driver,
+driver_button = tk.Button(root, text="Driver", command=installdriverswindow,
                           bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid", highlightbackground="#d9d9d9",
                           highlightcolor="white", font=("Fixedsys", 11))
 
@@ -282,30 +389,12 @@ com_port_var.set(com_ports[0] if com_ports else "Нет доступных по�
 com_port_menu = OptionMenu(root, com_port_var, *com_ports)
 com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
 
-def on_enter_install(event):
-    install_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
-
-def on_leave_install(event):
-    update_button_colors()
-
-def on_enter_driver(event):
-    driver_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
-
-def on_leave_driver(event):
-    update_button_colors()
-
-def on_enter_switch(event):
-    switch_firmware_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9")
-
-def on_leave_switch(event):
-    update_button_colors()
-
-install_button.bind("<Enter>", on_enter_install)
-install_button.bind("<Leave>", on_leave_install)
-driver_button.bind("<Enter>", on_enter_driver)
-driver_button.bind("<Leave>", on_leave_driver)
-switch_firmware_button.bind("<Enter>", on_enter_switch)
-switch_firmware_button.bind("<Leave>", on_leave_switch)
+install_button.bind("<Enter>", lambda e: install_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
+install_button.bind("<Leave>", lambda e: update_button_colors())
+driver_button.bind("<Enter>", lambda e: driver_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
+driver_button.bind("<Leave>", lambda e: update_button_colors())
+switch_firmware_button.bind("<Enter>", lambda e: switch_firmware_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
+switch_firmware_button.bind("<Leave>", lambda e: update_button_colors())
 
 install_button.place(relx=0.17, rely=0.11, anchor='center')
 com_port_menu.place(relx=0.37, rely=0.11, anchor='center')
