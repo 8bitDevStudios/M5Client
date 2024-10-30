@@ -4,13 +4,9 @@ import tkinter as tk
 from tkinter import messagebox, StringVar, OptionMenu, Toplevel
 import requests
 import serial
-import zipfile
-import serial.tools.list_ports
-import os, time
+import serial.tools.list_ports  # Убедитесь, что этот импорт включен
+import os
 import threading
-
-
-installing = False
 
 # Папка для загрузки файлов
 data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_data')
@@ -62,105 +58,6 @@ def install_esptool():
 
     if not os.path.exists(esptool_path):
         download_file(required_files["esptool.exe"], esptool_path)
-
-
-def installfile(url, name):
-
-    global installing
-
-    threading.Thread(target=lambda: messagebox.showinfo('M5Client', 'Устанавливаем...')).start()
-
-    if installing: 
-        threading.Thread(target=lambda: messagebox.showinfo('M5Client', 'Ты уже что-то устанавливаешь!')).start()
-        return True
-    
-    installing = True
-
-    while True:
-        try:
-            r = requests.get(url, timeout=240, stream=True)
-
-            total_size = int(r.headers.get('content-length', 0))
-            completed = 0
-            proc = 0
-            oneprocent = total_size//100
-
-            with open(name, 'wb') as f: 
-
-                starttime = time.time()
-
-                for chunk in r.iter_content(chunk_size = 64 * 1024):
-                    if chunk:
-                        completed += len(chunk)
-                        speed_mbps = ((len(chunk)+0.1) / (1024 * 16)) / (time.time()+1-starttime)
-                        proc = (completed+0.1)//(oneprocent+0.1)
-                        print(f'Устанавливаем... ({round(speed_mbps, 3)} МБ/с) {proc}%')
-                        f.write(chunk)
-                        f.flush()
-                        os.fsync(f.fileno())
-                        starttime = time.time()
-                
-            break
-        except Exception as e: 
-            print(f'Пытаемся установить снова... Проверьте скорость вашего интернет-соединения, ошибка: {e}')
-
-    installing = False
-
-def installadriver(name, dir, link, endtext='Нажмите Install для установки драйверов.'):
-
-    print('Устанавливаем файл...')
-
-    os.makedirs(name, exist_ok=True)
-
-    r = installfile(link, dir)
-
-    if not r:
-
-        print('Запускаем...')
-
-        os.system(f'start {dir}')
-
-        messagebox.showinfo(title='M5Client', message=endtext)
-
-def installsecdriver(name, dir, link, endtext):
-
-    print('Устанавливаем архив...')
-
-    r = installfile(link, 'file.zip')
-
-    if not r:
-
-        print('Разархивируем...')
-
-        with zipfile.ZipFile('file.zip', 'r') as zip_ref:
-            zip_ref.extractall(name)
-
-        print('Запускаем...')
-
-        os.system(f'start {dir}')
-
-        messagebox.showinfo(title='M5Client', message=endtext)
-
-def installdriverswindow():
-
-    driverwindow = tk.Tk()
-    driverwindow.title("DriverMenu")
-    driverwindow.geometry('240x170')
-
-    ch341 = tk.Button(driverwindow, text='CH341',command=lambda: threading.Thread(target=installadriver,
-                                            args=('CH341', 'CH341\\CH3CH341.exe', 'https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH341SER.EXE')).start())
-    ch341.place(x=20, y=20)
-
-    ch9102 = tk.Button(driverwindow, text='CH9102',command=lambda: threading.Thread(target=installadriver,
-                                            args=('CH9102', 'CH9102\\CH9102.exe', 'https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH9102.exe')).start())
-    ch9102.place(x=20, y=60)
-
-    CP210x = tk.Button(driverwindow, text='CP210x', command=lambda: threading.Thread(target=installsecdriver,
-                                            args=('CP210x', 'CP210x\\CP210xVCPInstaller_x64.exe', 'https://github.com/Sonys9/M5Tool/raw/refs/heads/main/CP210x_Windows_Drivers.zip',
-                                                    'Успех! Следуйте указаниям установщика для продолжения.')).start())
-    CP210x.place(x=20, y=100)
-
-    driverwindow.mainloop()
 
 # URL
 def get_latest_firmware_url():
@@ -259,14 +156,12 @@ def start_installation():
 def block_buttons():
     install_button.config(state=tk.DISABLED, bg="gray", fg="white")
     com_port_menu.config(state=tk.DISABLED, bg="gray", fg="white")
-    driver_button.config(state=tk.DISABLED, bg="gray", fg="white")
     switch_firmware_button.config(state=tk.DISABLED, bg="gray", fg="white")
     device_menu.config(state=tk.DISABLED, bg="gray", fg="white")
 
 def unblock_buttons():
     install_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     com_port_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
-    driver_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     switch_firmware_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     device_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     update_button_colors()
@@ -276,7 +171,7 @@ def get_com_ports():
     return [port.device for port in ports]
 
 root = tk.Tk()
-root.title("M5Client | v2.4")
+root.title("M5Client")
 root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
@@ -297,10 +192,6 @@ img.place(relx=0.5, rely=0.0, anchor='n')
 install_button = tk.Button(root, text="Install", command=lambda: threading.Thread(target=start_installation).start(),
                            bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid", highlightbackground="#d9d9d9",
                            highlightcolor="white", font=("Fixedsys", 20))
-
-driver_button = tk.Button(root, text="Driver", command=installdriverswindow,
-                          bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid", highlightbackground="#d9d9d9",
-                          highlightcolor="white", font=("Fixedsys", 11))
 
 current_firmware = StringVar(value="CatHack")
 
@@ -368,7 +259,6 @@ def update_button_colors():
 
     install_button.config(bg=color, fg=text_color)
     com_port_menu.config(bg=color, fg=text_color)
-    driver_button.config(bg=color, fg=text_color)
     switch_firmware_button.config(bg=color, fg=text_color)
     device_menu.config(bg=color, fg=text_color)
 
@@ -391,16 +281,13 @@ com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", 
 
 install_button.bind("<Enter>", lambda e: install_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
 install_button.bind("<Leave>", lambda e: update_button_colors())
-driver_button.bind("<Enter>", lambda e: driver_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
-driver_button.bind("<Leave>", lambda e: update_button_colors())
 switch_firmware_button.bind("<Enter>", lambda e: switch_firmware_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
 switch_firmware_button.bind("<Leave>", lambda e: update_button_colors())
 
 install_button.place(relx=0.17, rely=0.11, anchor='center')
 com_port_menu.place(relx=0.37, rely=0.11, anchor='center')
-driver_button.place(relx=0.5, rely=0.93, anchor='center')
-switch_firmware_button.place(relx=0.85, rely=0.05, anchor='n')
-device_menu.place(relx=0.525, rely=0.11, anchor='center')
+switch_firmware_button.place(relx=0.5, rely=0.90, anchor='n')
+device_menu.place(relx=0.51, rely=0.11, anchor='center')
 
 install_button.config(bg="#050403", fg="#ff8e19", highlightbackground="#d9d9d9", borderwidth=2)
 
