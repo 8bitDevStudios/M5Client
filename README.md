@@ -15,7 +15,6 @@
         <li>Fast and reliable flashing 🚀.</li>
     </ul>
     <h2>Screenshots 📸</h2>
-    <p>
 ![image](https://github.com/user-attachments/assets/7eebf61d-d78d-4c59-a10a-f0dd0561ae8e)
 ![image](https://github.com/user-attachments/assets/aa3749bb-ca2f-4242-b8df-e0366952225b)
 ![image](https://github.com/user-attachments/assets/2749f782-872c-4fe5-8b62-f3ce3b7ecf28)
