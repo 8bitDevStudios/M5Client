@@ -89,12 +89,12 @@ def open_driver_menu():
     label.pack(pady=10)
 
     ch9102_button = tk.Button(driver_menu_window, text="CH9102", command=lambda: download_driver(
-        "https://github.com/Teapot321/M5Client/raw/refs/heads/main/CH9102.exe", "CH9102.exe"),
+        "https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH9102.exe", "CH9102.exe"),
         bg="#050403", fg="#ffffff")
     ch9102_button.pack(pady=5)
 
     ch340_button = tk.Button(driver_menu_window, text="CH340", command=lambda: download_driver(
-        "https://github.com/Teapot321/M5Client/raw/refs/heads/main/CH341SER.EXE", "CH341SER.EXE"),
+        "https://github.com/Teapot321/M5Client/raw/refs/heads/main/Drivers/CH341SER.EXE", "CH341SER.EXE"),
         bg="#050403", fg="#ffffff")
     ch340_button.pack(pady=5)
 
