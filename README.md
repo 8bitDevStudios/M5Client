@@ -1,36 +1,33 @@
+ readme
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
 <body>
-    <h1>M5Client 🛠️💻</h1>
-    <p>M5Client is a convenient program for flashing M5StickC Plus2/Plus1.1 and Cardputer devices. With M5Client, you can easily install firmware such as Bruce, Nemo, Marauder, and CatHack. The program automatically installs the necessary drivers for your device, making the flashing process as simple and convenient as possible.</p>
-    <h2>Main Features 🌟</h2>
+    <h1>M5Client 🛠💻</h1>
+    <p>M5Client — это удобная программа для прошивки устройств M5StickC Plus2/Plus1.1 и Cardputer. С помощью M5Client вы можете легко установить прошивки Bruce, Nemo, Marauder и CatHack. Программа автоматически устанавливает необходимые драйвера для вашего устройства, что делает процесс прошивки максимально простым и удобным.</p>
+    <h2>Основные функции 🌟</h2>
     <ul>
-        <li>Support for Bruce, Nemo, Marauder, and CatHack firmware.</li>
-        <li>Automatic driver installation for the device 🔧.</li>
-        <li>Intuitive and user-friendly interface 🖥️.</li>
-        <li>Fast and reliable flashing 🚀.</li>
+        <li>Поддержка прошивок Bruce, Nemo, Marauder и CatHack.</li>
+        <li>Автоматическая установка драйверов для устройства 🔧.</li>
+        <li>Интуитивно понятный интерфейс 🖥.</li>
+        <li>Быстрая и надежная прошивка 🚀.</li>
     </ul>
-    <h2>Screenshots 📸
-![image](https://github.com/user-attachments/assets/7eebf61d-d78d-4c59-a10a-f0dd0561ae8e)
-![image](https://github.com/user-attachments/assets/aa3749bb-ca2f-4242-b8df-e0366952225b)
-![image](https://github.com/user-attachments/assets/2749f782-872c-4fe5-8b62-f3ce3b7ecf28)
-![image](https://github.com/user-attachments/assets/aad5800b-2fa5-4d81-a4f6-b66d2b7f34ef)
-![image](https://github.com/user-attachments/assets/5d65b665-2939-41be-93cb-669e241187b3)
+    <h2>Скриншоты 📸</h2>
+    <p>
+        <img src="https://github.com/user-attachments/assets/02f38e2d-9408-4449-b021-6c95a07d94a0" alt="Скриншот 1">
+        <img src="https://github.com/user-attachments/assets/48bb3a29-920f-4187-9221-98b9e4f28239" alt="Скриншот 2">
+        <img src="https://github.com/user-attachments/assets/204aacd2-8895-46b2-80f8-9035f8ffb79f" alt="Скриншот 3">
+        <img src="https://github.com/user-attachments/assets/a5e06b7b-5284-452e-afbd-3f279e4927f3" alt="Скриншот 4">
+        <img src="https://github.com/user-attachments/assets/8bf67682-3c0b-4127-a71d-08f9a10d1d9b" alt="Скриншот 5">
     </p>
-    <h2>Installation and Usage 💻</h2>
+    <h2>Установка и использование 💻</h2>
     <ol>
-        <li>Download the latest version of M5Client from <a href="https://github.com/Sonys9/M5Tool/releases/tag/3.6">GitHub</a>.</li>
-        <li>Run the program and follow the on-screen instructions 📜.</li>
-        <li>Select the desired firmware and connect your device 🔗.</li>
-        <li>Click the "Flash" button and wait for the process to complete ⏳.</li>
+        <li>Скачайте последнюю версию M5Client с <a href="https://github.com/Sonys9/M5Tool/releases/tag/3.6">GitHub</a>.</li>
+        <li>Запустите программу и следуйте инструкциям на экране 📜.</li>
+        <li>Выберите нужную прошивку и подключите ваше устройство 🔗.</li>
+        <li>Нажмите кнопку "Прошить" и дождитесь завершения процесса ⏳.</li>
     </ol>
-    <h2>Support and Feedback 📞</h2>
-    <p>If you have any questions or issues, please create an issue in this repository. We will be happy to help you! 🤝</p>
-    <p>Thank you for using M5Client! 😊✨</p>
+    <h2>Поддержка и обратная связь 📞</h2>
+    <p>Если у вас возникли вопросы или проблемы, пожалуйста, создайте issue в этом репозитории. Мы будем рады помочь вам! 🤝</p>
+    <p>Спасибо за использование M5Client! 😊✨</p>
 </body>
 </html>
-
