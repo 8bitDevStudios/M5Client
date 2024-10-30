@@ -16,11 +16,11 @@
     </ul>
     <h2>Screenshots 📸</h2>
     <p>
-        <img src="https://i.postimg.cc/FzXKxLcv/photo-2024-10-30-15-14-18.jpg" alt="Screenshot 1">
-        <img src="https://i.postimg.cc/GtPmgmJy/photo-2024-10-30-15-14-23.jpg" alt="Screenshot 2">
-        <img src="https://i.postimg.cc/HWbnk6Dk/photo-2024-10-30-15-14-25.jpg" alt="Screenshot 3">
-        <img src="https://i.postimg.cc/RV9F6w4Q/photo-2024-10-30-15-14-26.jpg" alt="Screenshot 4">
-        <img src="https://i.postimg.cc/hPrG9hGF/photo-2024-10-30-15-14-27.jpg" alt="Screenshot 5">
+![image](https://github.com/user-attachments/assets/7eebf61d-d78d-4c59-a10a-f0dd0561ae8e)
+![image](https://github.com/user-attachments/assets/aa3749bb-ca2f-4242-b8df-e0366952225b)
+![image](https://github.com/user-attachments/assets/2749f782-872c-4fe5-8b62-f3ce3b7ecf28)
+![image](https://github.com/user-attachments/assets/aad5800b-2fa5-4d81-a4f6-b66d2b7f34ef)
+![image](https://github.com/user-attachments/assets/5d65b665-2939-41be-93cb-669e241187b3)
     </p>
     <h2>Installation and Usage 💻</h2>
     <ol>
