@@ -22,6 +22,7 @@ required_files = {
     "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/Background/nemo.png",
     "m5launcher.png": "https://github.com/Teapot321/M5Client/raw/main/Background/m5launcher.png",
     "marauder.png": "https://github.com/Teapot321/M5Client/raw/main/Background/marauder.png",
+    "userdemo.png": "https://github.com/Teapot321/M5Client/raw/main/Background/userdemo.png",  # Добавлен UserDemo
     "esptool.exe": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/esptool.exe"
 }
 
@@ -63,7 +64,14 @@ def install_esptool():
 # URL
 def get_latest_firmware_url():
     device = device_var.get()
-    if current_firmware.get() == "Bruce":
+    if current_firmware.get() == "UserDemo":
+        if device == 'Plus2':
+            return "https://github.com/m5stack/M5StickCPlus2-UserDemo/releases/download/V0.1/K016-P2-M5StickCPlus2-UserDemo-V0.1_0x0.bin"
+        elif device == 'Card':
+            return "https://github.com/m5stack/M5Cardputer-UserDemo/releases/download/V0.9/K132-Cardputer-UserDemo-V0.9_0x0.bin"
+        else:
+            raise Exception("Прошивка UserDemo доступна только для Plus2 и Cardputer.")
+    elif current_firmware.get() == "Bruce":
         api_url = 'https://api.github.com/repos/pr3y/Bruce/releases/latest'
         response = requests.get(api_url)
         response.raise_for_status()
@@ -73,7 +81,7 @@ def get_latest_firmware_url():
                 return asset['browser_download_url']
             elif device == 'Plus1' and 'plus' in asset['name'].lower() and 'plus2' not in asset['name'].lower():
                 return asset['browser_download_url']
-            elif device == 'Cardputer' and 'cardputer' in asset['name'].lower():
+            elif device == 'Card' and 'cardputer' in asset['name'].lower():
                 return asset['browser_download_url']
         raise Exception("Прошивка для устройства не найдена.")
     elif current_firmware.get() == "Nemo":
@@ -81,21 +89,21 @@ def get_latest_firmware_url():
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus2.bin"
         elif device == 'Plus1':
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus.bin"
-        elif device == 'Cardputer':
+        elif device == 'Card':
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5Cardputer.bin"
     elif current_firmware.get() == "Marauder":
         if device == 'Plus2':
             return "https://m5burner-cdn.m5stack.com/firmware/b732d70a74405f7f1c6e961fa4d17f37.bin"
         elif device == 'Plus1':
             return "https://m5burner-cdn.m5stack.com/firmware/3397b17ad7fd314603abf40954a65369.bin"
-        elif device == 'Cardputer':
+        elif device == 'Card':
             return "https://m5burner-cdn.m5stack.com/firmware/aeb96d4fec972a53f934f8da62ab7341.bin"
     elif current_firmware.get() == "M5Launcher":
         if device == 'Plus2':
             return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus2.bin"
         elif device == 'Plus1':
             return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus1_1.bin"
-        elif device == 'Cardputer':
+        elif device == 'Card':
             return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cardputer.bin"
         raise Exception("Прошивка для устройства не найдена.")
     else:
@@ -115,6 +123,7 @@ def install_firmware():
         firmware_path = os.path.join(data_directory, "latest_firmware.bin")
 
         response = requests.get(firmware_url)
+        response.raise_for_status()  # Проверка на ошибки
         with open(firmware_path, 'wb') as f:
             f.write(response.content)
         flash_firmware(firmware_path)
@@ -188,6 +197,7 @@ bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
 nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
 m5launcher_image = tk.PhotoImage(file=os.path.join(data_directory, "m5launcher.png"))
 marauder_image = tk.PhotoImage(file=os.path.join(data_directory, "marauder.png"))
+userdemo_image = tk.PhotoImage(file=os.path.join(data_directory, "userdemo.png"))  # Добавлено изображение UserDemo
 
 img = tk.Label(root, image=cat_hack_image, bg="#050403")
 img.place(relx=0.5, rely=0.0, anchor='n')
@@ -216,6 +226,10 @@ def switch_firmware():
         current_firmware.set("M5Launcher")
         switch_firmware_button.config(text="M5Launcher")
         img.config(image=m5launcher_image)
+    elif current_firmware.get() == "M5Launcher":
+        current_firmware.set("UserDemo")
+        switch_firmware_button.config(text="UserDemo")
+        img.config(image=userdemo_image)  # Добавлено изображение для UserDemo
     else:
         current_firmware.set("CatHack")
         switch_firmware_button.config(text="CatHack")
@@ -228,23 +242,30 @@ def switch_firmware():
 def update_device_options():
     current_firmware_value = current_firmware.get()
     device_menu['menu'].delete(0, 'end')
-    if current_firmware_value == "CatHack":
+    if current_firmware_value == "UserDemo":
+        device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+        device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
+    elif current_firmware_value == "CatHack":
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
     elif current_firmware_value == "M5Launcher":
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
-        device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
+        device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
     elif current_firmware_value == "Marauder":
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
-        device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
+        device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
     else:
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
-        device_menu['menu'].add_command(label='Cardputer', command=lambda: device_var.set('Cardputer'))
+        device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
 
+# Обновление цветовой схемы кнопок для UserDemo
 def update_button_colors():
-    if current_firmware.get() == "Nemo":
+    if current_firmware.get() == "UserDemo":
+        color = "#000000"
+        text_color = "#fab320"
+    elif current_firmware.get() == "Nemo":
         color = "#060606"
         text_color = "#7d9f71"
     elif current_firmware.get() == "Bruce":
@@ -303,7 +324,7 @@ install_button.place(relx=0.17, rely=0.11, anchor='center')
 com_port_menu.place(relx=0.40, rely=0.11, anchor='center')
 switch_firmware_button.place(relx=0.5, rely=0.90, anchor='n')
 device_menu.place(relx=0.54, rely=0.11, anchor='center')
-drivers_button.place(relx=0.31, rely=0.07, anchor='n') 
+drivers_button.place(relx=0.31, rely=0.07, anchor='n')
 
 install_button.config(bg="#050403", fg="#ff8e19", highlightbackground="#d9d9d9", borderwidth=2)
 
