@@ -2,22 +2,19 @@
 <html lang="en">
 <body>
     <h1>M5Client 🛠💻</h1>
-    <p>M5Client — это удобная программа для прошивки устройств M5StickC Plus2/Plus1.1 и Cardputer. 
-     С помощью M5Client вы можете легко установить последнюю версию прошивок Bruce, Nemo, Marauder, CatHack и M5Launcher на своё устройство.</p>
+    <p>M5Client — это удобная программа для прошивки устройств M5StickC Plus2/Plus1.1 и Cardputer. </p>
     <h2>Основные функции 🌟</h2>
     <ul>
-        <li>Поддержка прошивок Bruce, Nemo, Marauder, CatHack и M5Laucnher.</li>
+        <li>Поддержка прошивок Bruce, Nemo, Marauder, CatHack, M5Laucnher и UserDemo.</li>
         <li>Установка драйверов для устройства 🔧.</li>
         <li>Интуитивно понятный интерфейс 🖥.</li>
         <li>Быстрая и надежная прошивка 🚀.</li>
     </ul>
     <h2>Скриншоты 📸</h2>
     <p>
-        <img src="https://github.com/user-attachments/assets/02f38e2d-9408-4449-b021-6c95a07d94a0" alt="Скриншот 1">
-        <img src="https://github.com/user-attachments/assets/48bb3a29-920f-4187-9221-98b9e4f28239" alt="Скриншот 2">
-        <img src="https://github.com/user-attachments/assets/204aacd2-8895-46b2-80f8-9035f8ffb79f" alt="Скриншот 3">
-        <img src="https://github.com/user-attachments/assets/a5e06b7b-5284-452e-afbd-3f279e4927f3" alt="Скриншот 4">
-        <img src="https://github.com/user-attachments/assets/8bf67682-3c0b-4127-a71d-08f9a10d1d9b" alt="Скриншот 5">
+        <img src="https://github.com/user-attachments/assets/a429a441-d0a2-4029-ab77-0513a477f344" alt="Скриншот 1">
+        <img src="https://github.com/user-attachments/assets/928aaa50-3c66-4dc0-aedf-a18b2eb1fb02" alt="Скриншот 2">
+        <img src="https://github.com/user-attachments/assets/8ec2be86-4b38-4e0b-9ad5-a06804412797" alt="Скриншот 3">
     </p>
     <h2>Установка и использование 💻</h2>
     <ol>
