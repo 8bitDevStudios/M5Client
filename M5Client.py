@@ -4,9 +4,10 @@ import tkinter as tk
 from tkinter import messagebox, StringVar, OptionMenu, Toplevel
 import requests
 import serial
-import serial.tools.list_ports  # Убедитесь, что этот импорт включен
+import serial.tools.list_ports
 import os
 import threading
+import webbrowser  # Импортируем модуль для открытия веб-страниц
 
 # Папка для загрузки файлов
 data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_data')
@@ -158,12 +159,14 @@ def block_buttons():
     com_port_menu.config(state=tk.DISABLED, bg="gray", fg="white")
     switch_firmware_button.config(state=tk.DISABLED, bg="gray", fg="white")
     device_menu.config(state=tk.DISABLED, bg="gray", fg="white")
+    drivers_button.config(state=tk.DISABLED, bg="gray", fg="white")  # Блокируем кнопку drivers
 
 def unblock_buttons():
     install_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     com_port_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     switch_firmware_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     device_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
+    drivers_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")  # Разблокируем кнопку drivers
     update_button_colors()
 
 def get_com_ports():
@@ -261,6 +264,7 @@ def update_button_colors():
     com_port_menu.config(bg=color, fg=text_color)
     switch_firmware_button.config(bg=color, fg=text_color)
     device_menu.config(bg=color, fg=text_color)
+    drivers_button.config(bg=color, fg=text_color)  # Обновляем цвет кнопки drivers
 
 switch_firmware_button = tk.Button(root, text="CatHack", command=switch_firmware,
                                    bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
@@ -279,15 +283,27 @@ com_port_var.set(com_ports[0] if com_ports else "Нет доступных по�
 com_port_menu = OptionMenu(root, com_port_var, *com_ports)
 com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
 
+# Функция для открытия страницы драйверов
+def open_drivers_page():
+    webbrowser.open("https://github.com/Teapot321/M5Client/tree/main/Drivers")
+
+# Кнопка Drivers
+drivers_button = tk.Button(root, text="?", command=open_drivers_page,
+                           bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
+                           highlightbackground="#d9d9d9", highlightcolor="white", font=("Fixedsys", 1))
+
 install_button.bind("<Enter>", lambda e: install_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
 install_button.bind("<Leave>", lambda e: update_button_colors())
 switch_firmware_button.bind("<Enter>", lambda e: switch_firmware_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
 switch_firmware_button.bind("<Leave>", lambda e: update_button_colors())
+drivers_button.bind("<Enter>", lambda e: drivers_button.config(bg="white", fg="#050403", highlightbackground="#d9d9d9"))
+drivers_button.bind("<Leave>", lambda e: update_button_colors())
 
 install_button.place(relx=0.17, rely=0.11, anchor='center')
-com_port_menu.place(relx=0.37, rely=0.11, anchor='center')
+com_port_menu.place(relx=0.40, rely=0.11, anchor='center')
 switch_firmware_button.place(relx=0.5, rely=0.90, anchor='n')
-device_menu.place(relx=0.51, rely=0.11, anchor='center')
+device_menu.place(relx=0.54, rely=0.11, anchor='center')
+drivers_button.place(relx=0.31, rely=0.07, anchor='n') 
 
 install_button.config(bg="#050403", fg="#ff8e19", highlightbackground="#d9d9d9", borderwidth=2)
 
