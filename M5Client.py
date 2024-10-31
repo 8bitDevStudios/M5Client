@@ -7,15 +7,15 @@ import serial
 import serial.tools.list_ports
 import os
 import threading
-import webbrowser  # Импортируем модуль для открытия веб-страниц
+import webbrowser
 
-# Папка для загрузки файлов
+# Куда летят зависимости
 data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_data')
 
 # Создание папки, если она не существует
 os.makedirs(data_directory, exist_ok=True)
 
-# Список необходимых файлов
+# Зависимости
 required_files = {
     "cathack.png": "https://github.com/Teapot321/M5Client/raw/main/Background/cathack.png",
     "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/Background/bruce.png",
@@ -26,7 +26,7 @@ required_files = {
     "esptool.exe": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/esptool.exe"
 }
 
-# Проверка наличия файлов и их загрузка
+# Проверка наличия зависимостей и их загрузка
 def check_and_download_files():
     for filename, url in required_files.items():
         file_path = os.path.join(data_directory, filename)
@@ -168,14 +168,14 @@ def block_buttons():
     com_port_menu.config(state=tk.DISABLED, bg="gray", fg="white")
     switch_firmware_button.config(state=tk.DISABLED, bg="gray", fg="white")
     device_menu.config(state=tk.DISABLED, bg="gray", fg="white")
-    drivers_button.config(state=tk.DISABLED, bg="gray", fg="white")  # Блокируем кнопку drivers
+    drivers_button.config(state=tk.DISABLED, bg="gray", fg="white")
 
 def unblock_buttons():
     install_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     com_port_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     switch_firmware_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     device_menu.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
-    drivers_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")  # Разблокируем кнопку drivers
+    drivers_button.config(state=tk.NORMAL, bg="#050403", fg="#ff8e19")
     update_button_colors()
 
 def get_com_ports():
@@ -188,7 +188,7 @@ root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
 
-# Проверяем и загружаем необходимые файлы
+# Проверяем и загружаем необходимые зависимости
 check_and_download_files()
 
 # Загружаем изображения
@@ -197,7 +197,7 @@ bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
 nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
 m5launcher_image = tk.PhotoImage(file=os.path.join(data_directory, "m5launcher.png"))
 marauder_image = tk.PhotoImage(file=os.path.join(data_directory, "marauder.png"))
-userdemo_image = tk.PhotoImage(file=os.path.join(data_directory, "userdemo.png"))  # Добавлено изображение UserDemo
+userdemo_image = tk.PhotoImage(file=os.path.join(data_directory, "userdemo.png"))
 
 img = tk.Label(root, image=cat_hack_image, bg="#050403")
 img.place(relx=0.5, rely=0.0, anchor='n')
@@ -229,7 +229,7 @@ def switch_firmware():
     elif current_firmware.get() == "M5Launcher":
         current_firmware.set("UserDemo")
         switch_firmware_button.config(text="UserDemo")
-        img.config(image=userdemo_image)  # Добавлено изображение для UserDemo
+        img.config(image=userdemo_image)
     else:
         current_firmware.set("CatHack")
         switch_firmware_button.config(text="CatHack")
@@ -260,7 +260,7 @@ def update_device_options():
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
         device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
 
-# Обновление цветовой схемы кнопок для UserDemo
+# Цвета кнопок
 def update_button_colors():
     if current_firmware.get() == "UserDemo":
         color = "#000000"
@@ -285,7 +285,7 @@ def update_button_colors():
     com_port_menu.config(bg=color, fg=text_color)
     switch_firmware_button.config(bg=color, fg=text_color)
     device_menu.config(bg=color, fg=text_color)
-    drivers_button.config(bg=color, fg=text_color)  # Обновляем цвет кнопки drivers
+    drivers_button.config(bg=color, fg=text_color)
 
 switch_firmware_button = tk.Button(root, text="CatHack", command=switch_firmware,
                                    bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
@@ -304,11 +304,10 @@ com_port_var.set(com_ports[0] if com_ports else "Нет доступных по�
 com_port_menu = OptionMenu(root, com_port_var, *com_ports)
 com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
 
-# Функция для открытия страницы драйверов
+# Гит(Типотика) с драйверами
 def open_drivers_page():
     webbrowser.open("https://github.com/Teapot321/M5Client/tree/main/Drivers")
 
-# Кнопка Drivers
 drivers_button = tk.Button(root, text="?", command=open_drivers_page,
                            bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
                            highlightbackground="#d9d9d9", highlightcolor="white", font=("Fixedsys", 1))
