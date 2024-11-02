@@ -12,9 +12,9 @@
     </ul>
     <h2>Скриншоты 📸</h2>
     <p>
-        <img src="https://github.com/user-attachments/assets/a429a441-d0a2-4029-ab77-0513a477f344" alt="Скриншот 1">
-        <img src="https://github.com/user-attachments/assets/928aaa50-3c66-4dc0-aedf-a18b2eb1fb02" alt="Скриншот 2">
-        <img src="https://github.com/user-attachments/assets/8ec2be86-4b38-4e0b-9ad5-a06804412797" alt="Скриншот 3">
+        <img src="https://github.com/user-attachments/assets/d36c24b1-2ff2-4c70-b9d1-86f480f16059" alt="Скриншот 1">
+        <img src="https://github.com/user-attachments/assets/fb520cc6-8e53-47db-9cf3-58719f069a9d" alt="Скриншот 2">
+        <img src="https://github.com/user-attachments/assets/4998cf0d-05c9-4bd9-b812-b30c6e9b3b39" alt="Скриншот 3">
     </p>
     <h2>Установка и использование 💻</h2>
     <ol>
