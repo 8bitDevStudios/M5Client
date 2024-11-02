@@ -39,9 +39,9 @@ def download_file(url, file_path):
         response.raise_for_status()
         with open(file_path, 'wb') as f:
             f.write(response.content)
-        print(f"Файл {file_path} загружен.")
+        print(f"File {file_path} downloaded.")
     except Exception as e:
-        messagebox.showerror("Ошибка", f"Не удалось загрузить {file_path}: {e}")
+        messagebox.showerror("Error", f"Failed to upload {file_path}: {e}")
 
 # Установка библиотек
 def install_requirements():
@@ -70,7 +70,7 @@ def get_latest_firmware_url():
         elif device == 'Card':
             return "https://github.com/m5stack/M5Cardputer-UserDemo/releases/download/V0.9/K132-Cardputer-UserDemo-V0.9_0x0.bin"
         else:
-            raise Exception("Прошивка UserDemo доступна только для Plus2 и Cardputer.")
+            raise Exception("The UserDemo firmware is only available for Plus2 and Cardputer.")
     elif current_firmware.get() == "Bruce":
         api_url = 'https://api.github.com/repos/pr3y/Bruce/releases/latest'
         response = requests.get(api_url)
@@ -83,7 +83,7 @@ def get_latest_firmware_url():
                 return asset['browser_download_url']
             elif device == 'Card' and 'cardputer' in asset['name'].lower():
                 return asset['browser_download_url']
-        raise Exception("Прошивка для устройства не найдена.")
+        raise Exception("The firmware for the device was not found.")
     elif current_firmware.get() == "Nemo":
         if device == 'Plus2':
             return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus2.bin"
@@ -105,10 +105,10 @@ def get_latest_firmware_url():
             return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus1_1.bin"
         elif device == 'Card':
             return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cardputer.bin"
-        raise Exception("Прошивка для устройства не найдена.")
+        raise Exception("No firmware was found for this device.")
     else:
         if device != 'Plus2':
-            raise Exception("Прошивка CatHack доступна только на Plus2.")
+            raise Exception("The CatHack firmware is only available on Plus2.")
         api_url = "https://api.github.com/repos/Stachugit/CatHack/releases/latest"
         response = requests.get(api_url)
         response.raise_for_status()
@@ -128,7 +128,7 @@ def install_firmware():
             f.write(response.content)
         flash_firmware(firmware_path)
     except Exception as e:
-        messagebox.showerror("Ошибка", f"Не удалось загрузить прошивку: {e}")
+        messagebox.showerror("M5Client", f"Failed to download the firmware: {e}")
 
 # Прошивка устройства
 def flash_firmware(firmware_path):
@@ -136,11 +136,11 @@ def flash_firmware(firmware_path):
     esptool_path = os.path.join(data_directory, 'esptool.exe')
 
     loading_window = Toplevel(root)
-    loading_window.title("Прошивка устройства")
+    loading_window.title("M5Client")
     loading_window.geometry("300x100")
     loading_window.configure(bg="#050403")
 
-    loading_label = tk.Label(loading_window, text="Прошивка устройства...", bg="#050403", fg="#ffffff",
+    loading_label = tk.Label(loading_window, text="Flashing...", bg="#050403", fg="#ffffff",
                              font=("Arial", 14))
     loading_label.pack(pady=20)
 
@@ -150,9 +150,9 @@ def flash_firmware(firmware_path):
         try:
             command = [esptool_path, '--port', com_port, '--baud', '1500000', 'write_flash', '0x00000', firmware_path]
             subprocess.run(command, check=True)
-            messagebox.showinfo("Успех", "Прошивка установлена успешно!")
+            messagebox.showinfo("M5Client", "The firmware is installed")
         except subprocess.CalledProcessError as e:
-            messagebox.showerror("Ошибка", f"Не удалось прошить устройство: {e}")
+            messagebox.showerror("Error", f"Failed to flash the device: {e}")
         finally:
             loading_window.destroy()
             unblock_buttons()
@@ -183,7 +183,7 @@ def get_com_ports():
     return [port.device for port in ports]
 
 root = tk.Tk()
-root.title("M5Client | v2.5")
+root.title("M5Client | v2.6")
 root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
@@ -299,7 +299,7 @@ device_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", bo
 
 com_port_var = StringVar(root)
 com_ports = get_com_ports()
-com_port_var.set(com_ports[0] if com_ports else "Нет доступных портов")
+com_port_var.set(com_ports[0] if com_ports else "No ports available")
 
 com_port_menu = OptionMenu(root, com_port_var, *com_ports)
 com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", borderwidth=2)
