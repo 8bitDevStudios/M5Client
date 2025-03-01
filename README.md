@@ -11,9 +11,9 @@ M5Client is a convenient tool for flashing M5StickC Plus2/Plus1.1 and Cardputer 
 - Fast and reliable flashing 🚀.
 
 ## Screenshots 📸
-![Screenshot 1](https://github.com/user-attachments/assets/159a2372-e2e0-4eac-9a3a-1f633c0a011b)
-![Screenshot 2](https://github.com/user-attachments/assets/dca7d193-a8c1-4945-85b2-19ab7a837e1d)
-![Screenshot 3](https://github.com/user-attachments/assets/e6806526-1b5f-4589-ad3b-4d983d58f9a2)
+![Screenshot 1](https://github.com/user-attachments/assets/752ea82d-0780-458e-8236-1b0d7f2bb5b5)
+![Screenshot 2](https://github.com/user-attachments/assets/8fc27a3e-8af0-4b21-9336-9ff2f37c69d8)
+![Screenshot 3](https://github.com/user-attachments/assets/666fe6d9-1d18-4644-9a2e-cb872a3972a0)
 
 ## Installation and Usage 💻
 1. Download the latest version of M5Client from [GitHub](https://github.com/Teapot321/M5Client/releases).
@@ -41,9 +41,9 @@ M5Client — это удобная программа для прошивки у
 - Быстрая и надежная прошивка 🚀.
 
 ## Скриншоты 📸
-![Скриншот 1](https://github.com/user-attachments/assets/159a2372-e2e0-4eac-9a3a-1f633c0a011b)
-![Скриншот 2](https://github.com/user-attachments/assets/dca7d193-a8c1-4945-85b2-19ab7a837e1d)
-![Скриншот 3](https://github.com/user-attachments/assets/e6806526-1b5f-4589-ad3b-4d983d58f9a2)
+![Скриншот 1](https://github.com/user-attachments/assets/752ea82d-0780-458e-8236-1b0d7f2bb5b5)
+![Скриншот 2](https://github.com/user-attachments/assets/8fc27a3e-8af0-4b21-9336-9ff2f37c69d8)
+![Скриншот 3](https://github.com/user-attachments/assets/666fe6d9-1d18-4644-9a2e-cb872a3972a0)
 
 ## Установка и использование 💻
 1. Скачайте последнюю версию M5Client с [GitHub](https://github.com/Teapot321/M5Client/releases).
