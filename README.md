@@ -5,7 +5,7 @@
 M5Client is a convenient tool for flashing M5StickC Plus2/Plus1.1 and Cardputer devices.
 
 ## Main Features 🌟
-- Firmwares Bruce, Nemo, Marauder, CatHack, M5Launcher, and UserDemo.
+- Firmwares Bruce, Nemo, Marauder, CatHack, M5Launcher, and Factory.
 - Driver installation for the device 🔧.
 - User-friendly interface 🖥.
 - Fast and reliable flashing 🚀.
@@ -35,7 +35,7 @@ Thank you for using M5Client! 😊✨
 M5Client — это удобная программа для прошивки устройств M5StickC Plus2/Plus1.1 и Cardputer.
 
 ## Основные функции 🌟
-- Прошивки Bruce, Nemo, Marauder, CatHack, M5Launcher и UserDemo.
+- Прошивки Bruce, Nemo, Marauder, CatHack, M5Launcher и Factory.
 - Установка драйверов для устройства 🔧.
 - Интуитивно понятный интерфейс 🖥.
 - Быстрая и надежная прошивка 🚀.
