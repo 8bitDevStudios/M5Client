@@ -17,13 +17,13 @@ os.makedirs(data_directory, exist_ok=True)
 
 # Зависимости
 required_files = {
-    "cathack.png": "https://github.com/Teapot321/M5Client/raw/main/Background/cathack.png",
-    "bruce.png": "https://github.com/Teapot321/M5Client/raw/main/Background/bruce.png",
-    "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/Background/nemo.png",
-    "m5launcher.png": "https://github.com/Teapot321/M5Client/raw/main/Background/m5launcher.png",
-    "marauder.png": "https://github.com/Teapot321/M5Client/raw/main/Background/marauder.png",
-    "factory.png": "https://github.com/Teapot321/M5Client/raw/main/Background/factory.png",
-    "esptool.exe": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/esptool.exe"
+    "cathack.png": "https://github.com/Teapot174/M5Client/raw/main/Background/cathack.png",
+    "bruce.png": "https://github.com/Teapot174/M5Client/raw/main/Background/bruce.png",
+    "nemo.png": "https://github.com/Teapot174/M5Client/raw/main/Background/nemo.png",
+    "m5launcher.png": "https://github.com/Teapot174/M5Client/raw/main/Background/m5launcher.png",
+    "marauder.png": "https://github.com/Teapot174/M5Client/raw/main/Background/marauder.png",
+    "factory.png": "https://github.com/Teapot174/M5Client/raw/main/Background/factory.png",
+    "esptool.exe": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/esptool.exe"
 }
 
 # Словарь с ссылками на бинарные файлы для каждого устройства
@@ -298,7 +298,7 @@ com_port_menu.config(bg="#050403", fg="#ff8e19", highlightbackground="#161615", 
 
 # Гит(Типотика) с драйверами
 def open_drivers_page():
-    webbrowser.open("https://github.com/Teapot321/M5Client/tree/main/Drivers")
+    webbrowser.open("https://github.com/Teapot174/M5Client/tree/main/Drivers")
 
 drivers_button = tk.Button(root, text="?", command=open_drivers_page,
                            bg="#050403", fg="#ff8e19", borderwidth=2, relief="solid",
