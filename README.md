@@ -23,6 +23,8 @@ M5Client is a convenient tool for flashing M5StickC Plus2/Plus1.1 and Cardputer 
 ## Support and Feedback 📞
 If you have any questions or issues, please create an issue in this repository. I will be happy to help you! 🤝
 
+**[You can also check this issue for a solution to your problem](https://t.me/+QFjtYcgb7J9jYTJi)**
+
 Thank you for using M5Client! 😊✨  
 [Our Telegram](https://t.me/+QFjtYcgb7J9jYTJi)
 
@@ -50,6 +52,8 @@ M5Client — это удобная программа для прошивки у
 
 ## Поддержка и обратная связь 📞
 Если у вас возникли вопросы или проблемы, пожалуйста, создайте issue в этом репозитории. Я буду рад помочь вам! 🤝
+
+**[Также можете проверить этот issue на наличие решения вашей проблемы](https://t.me/+QFjtYcgb7J9jYTJi)**
 
 Спасибо за использование M5Client! 😊✨  
 [Наш Telegram](https://t.me/+QFjtYcgb7J9jYTJi)
