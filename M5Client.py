@@ -10,7 +10,7 @@ import threading
 import webbrowser
 
 # Куда летят зависимости
-data_directory = os.path.join(os.getenv('APPDATA'), 'm5client_data')
+data_directory = os.path.join(os.getenv('APPDATA'), 'M5Client_data')
 
 # Создание папки, если она не существует
 os.makedirs(data_directory, exist_ok=True)
@@ -22,8 +22,40 @@ required_files = {
     "nemo.png": "https://github.com/Teapot321/M5Client/raw/main/Background/nemo.png",
     "m5launcher.png": "https://github.com/Teapot321/M5Client/raw/main/Background/m5launcher.png",
     "marauder.png": "https://github.com/Teapot321/M5Client/raw/main/Background/marauder.png",
-    "userdemo.png": "https://github.com/Teapot321/M5Client/raw/main/Background/userdemo.png",  # Добавлен UserDemo
+    "factory.png": "https://github.com/Teapot321/M5Client/raw/main/Background/factory.png",
     "esptool.exe": "https://github.com/Teapot321/M5Client/raw/refs/heads/main/esptool.exe"
+}
+
+# Словарь с ссылками на бинарные файлы для каждого устройства
+firmware_urls = {
+    "Bruce": {
+        "Card": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Bruce/Card.bin",
+        "Plus1": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Bruce/Plus1.bin",
+        "Plus2": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Bruce/Plus2.bin"
+    },
+    "CatHack": {
+        "Plus2": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Cathack/Plus2.bin"
+    },
+    "Factory": {
+        "Card": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Factory/Card.bin",
+        "Plus1": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Factory/Plus1.bin",
+        "Plus2": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Factory/Plus2.bin"
+    },
+    "M5Launcher": {
+        "Card": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/M5Launcher/Card.bin",
+        "Plus1": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/M5Launcher/Plus1.bin",
+        "Plus2": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/M5Launcher/Plus2.bin"
+    },
+    "Marauder": {
+        "Card": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Marauder/Card.bin",
+        "Plus1": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Marauder/Plus1.bin",
+        "Plus2": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Marauder/Plus2.bin"
+    },
+    "Nemo": {
+        "Card": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Nemo/Card.bin",
+        "Plus1": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Nemo/Plus1.bin",
+        "Plus2": "https://github.com/Teapot174/M5Client/raw/refs/heads/main/FW/Nemo/Plus2.bin"
+    }
 }
 
 # Проверка наличия зависимостей и их загрузка
@@ -61,66 +93,21 @@ def install_esptool():
     if not os.path.exists(esptool_path):
         download_file(required_files["esptool.exe"], esptool_path)
 
-# URL
+# Получение URL для прошивки
 def get_latest_firmware_url():
     device = device_var.get()
-    if current_firmware.get() == "UserDemo":
-        if device == 'Plus2':
-            return "https://github.com/m5stack/M5StickCPlus2-UserDemo/releases/download/V0.1/K016-P2-M5StickCPlus2-UserDemo-V0.1_0x0.bin"
-        elif device == 'Card':
-            return "https://github.com/m5stack/M5Cardputer-UserDemo/releases/download/V0.9/K132-Cardputer-UserDemo-V0.9_0x0.bin"
-        else:
-            raise Exception("The UserDemo firmware is only available for Plus2 and Cardputer.")
-    elif current_firmware.get() == "Bruce":
-        api_url = 'https://api.github.com/repos/pr3y/Bruce/releases/latest'
-        response = requests.get(api_url)
-        response.raise_for_status()
-        release_data = response.json()
-        for asset in release_data['assets']:
-            if device == 'Plus2' and 'plus2' in asset['name'].lower():
-                return asset['browser_download_url']
-            elif device == 'Plus1' and 'plus' in asset['name'].lower() and 'plus2' not in asset['name'].lower():
-                return asset['browser_download_url']
-            elif device == 'Card' and 'cardputer' in asset['name'].lower():
-                return asset['browser_download_url']
-        raise Exception("The firmware for the device was not found.")
-    elif current_firmware.get() == "Nemo":
-        if device == 'Plus2':
-            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus2.bin"
-        elif device == 'Plus1':
-            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5StickCPlus.bin"
-        elif device == 'Card':
-            return "https://github.com/n0xa/m5stick-nemo/releases/download/v2.7.0/M5Nemo-v2.7.0-M5Cardputer.bin"
-    elif current_firmware.get() == "Marauder":
-        if device == 'Plus2':
-            return "https://m5burner-cdn.m5stack.com/firmware/b732d70a74405f7f1c6e961fa4d17f37.bin"
-        elif device == 'Plus1':
-            return "https://m5burner-cdn.m5stack.com/firmware/3397b17ad7fd314603abf40954a65369.bin"
-        elif device == 'Card':
-            return "https://m5burner-cdn.m5stack.com/firmware/aeb96d4fec972a53f934f8da62ab7341.bin"
-    elif current_firmware.get() == "M5Launcher":
-        if device == 'Plus2':
-            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus2.bin"
-        elif device == 'Plus1':
-            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cplus1_1.bin"
-        elif device == 'Card':
-            return "https://github.com/bmorcelli/M5Stick-Launcher/releases/latest/download/Launcher-m5stack-cardputer.bin"
-        raise Exception("No firmware was found for this device.")
+    firmware_name = current_firmware.get()
+
+    if firmware_name in firmware_urls and device in firmware_urls[firmware_name]:
+        return firmware_urls[firmware_name][device]
     else:
-        if device != 'Plus2':
-            raise Exception("The CatHack firmware is only available on Plus2.")
-        api_url = "https://api.github.com/repos/Stachugit/CatHack/releases/latest"
-        response = requests.get(api_url)
-        response.raise_for_status()
-        release_data = response.json()
-        asset = release_data['assets'][0]
-        return asset['browser_download_url']
+        raise Exception(f"Firmware for {firmware_name} on device {device} not found.")
 
 # Установка бина
 def install_firmware():
     try:
         firmware_url = get_latest_firmware_url()
-        firmware_path = os.path.join(data_directory, "latest_firmware.bin")
+        firmware_path = os.path.join(data_directory, "Firmware.bin")  # Имя файла изменено на Firmware.bin
 
         response = requests.get(firmware_url)
         response.raise_for_status()  # Проверка на ошибки
@@ -183,7 +170,7 @@ def get_com_ports():
     return [port.device for port in ports]
 
 root = tk.Tk()
-root.title("M5Client | v2.6")
+root.title("M5Client | v2.7")
 root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
@@ -197,7 +184,7 @@ bruce_image = tk.PhotoImage(file=os.path.join(data_directory, "bruce.png"))
 nemo_image = tk.PhotoImage(file=os.path.join(data_directory, "nemo.png"))
 m5launcher_image = tk.PhotoImage(file=os.path.join(data_directory, "m5launcher.png"))
 marauder_image = tk.PhotoImage(file=os.path.join(data_directory, "marauder.png"))
-userdemo_image = tk.PhotoImage(file=os.path.join(data_directory, "userdemo.png"))
+factory_image = tk.PhotoImage(file=os.path.join(data_directory, "factory.png"))
 
 img = tk.Label(root, image=cat_hack_image, bg="#050403")
 img.place(relx=0.5, rely=0.0, anchor='n')
@@ -227,9 +214,9 @@ def switch_firmware():
         switch_firmware_button.config(text="M5Launcher")
         img.config(image=m5launcher_image)
     elif current_firmware.get() == "M5Launcher":
-        current_firmware.set("UserDemo")
-        switch_firmware_button.config(text="UserDemo")
-        img.config(image=userdemo_image)
+        current_firmware.set("Factory")
+        switch_firmware_button.config(text="Factory")
+        img.config(image=factory_image)
     else:
         current_firmware.set("CatHack")
         switch_firmware_button.config(text="CatHack")
@@ -242,8 +229,9 @@ def switch_firmware():
 def update_device_options():
     current_firmware_value = current_firmware.get()
     device_menu['menu'].delete(0, 'end')
-    if current_firmware_value == "UserDemo":
+    if current_firmware_value == "Factory":
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+        device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
         device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
     elif current_firmware_value == "CatHack":
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
@@ -255,6 +243,10 @@ def update_device_options():
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
         device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
+    elif current_firmware_value == "Factory":
+        device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
+        device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
+        device_menu['menu'].add_command(label='Card', command=lambda: device_var.set('Card'))
     else:
         device_menu['menu'].add_command(label='Plus2', command=lambda: device_var.set('Plus2'))
         device_menu['menu'].add_command(label='Plus1', command=lambda: device_var.set('Plus1'))
@@ -262,7 +254,7 @@ def update_device_options():
 
 # Цвета кнопок
 def update_button_colors():
-    if current_firmware.get() == "UserDemo":
+    if current_firmware.get() == "Factory":
         color = "#000000"
         text_color = "#fab320"
     elif current_firmware.get() == "Nemo":
