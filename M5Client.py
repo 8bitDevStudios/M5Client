@@ -174,7 +174,7 @@ def get_com_ports():
     return [port.device for port in ports]
 
 root = tk.Tk()
-root.title("M5Client | v1.0.0")
+root.title("M5Client | v1.0")
 root.configure(bg="#050403")
 root.geometry("600x350")
 root.resizable(False, False)
