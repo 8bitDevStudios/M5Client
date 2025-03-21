@@ -2,7 +2,7 @@
 
 <a name="english"></a>
 # M5Client 🛠💻
-M5Client is a convenient tool for flashing M5StickC Plus2/Plus1.1 and Cardputer devices.
+M5Client is a convenient tool for flashing M5StickC Plus2/Plus1.1, Cardputer and T-Embed CC1101.
 
 ## Main Features 🌟
 - Firmwares Bruce, Nemo, Marauder, CatHack, M5Launcher, and Factory.
@@ -32,7 +32,7 @@ Thank you for using M5Client! 😊✨
 
 <a name="russian"></a>
 # M5Client 🛠💻
-M5Client — это удобная программа для прошивки устройств M5StickC Plus2/Plus1.1 и Cardputer.
+M5Client — это удобная программа для прошивки устройств M5StickC Plus2/Plus1.1, Cardputer и T-Embed CC1101.
 
 ## Основные функции 🌟
 - Прошивки Bruce, Nemo, Marauder, CatHack, M5Launcher и Factory.
