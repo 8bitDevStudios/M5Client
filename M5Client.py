@@ -10,7 +10,7 @@ import threading
 import webbrowser
 
 # Куда летят зависимости
-data_directory = os.path.join(os.getenv('APPDATA'), 'M5Client_data')
+data_directory = os.path.join(os.getenv('APPDATA', ''), 'M5Client_data')
 
 # Создание папки, если она не существует
 os.makedirs(data_directory, exist_ok=True)
@@ -139,6 +139,7 @@ def flash_firmware(firmware_path):
 
     def flash_device():
         try:
+
             command = [esptool_path, '--port', com_port, '--baud', '1500000', 'write_flash', '0x00000', firmware_path]
             subprocess.run(command, check=True)
             messagebox.showinfo("M5Client", "The firmware is installed")
